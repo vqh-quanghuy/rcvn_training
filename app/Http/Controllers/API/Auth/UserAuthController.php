@@ -10,45 +10,6 @@ use App\Models\User;
 
 class UserAuthController extends Controller
 {
-    /**
-     * Register a User.
-     * @return \Illuminate\Http\Response
-     */
-    public function register(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'group_role' => 'required|string|max:50',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|confirmed|min:8',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Invalid Inputs',
-                'error' => $validator->errors()
-            ], 401);
-        }
-
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->group_role = $request->group_role;
-        $user->is_active = 1;
-        $user->is_delete = 0;
-        $user->password = bcrypt($request->password);
-        $user->save();
-
-        $token = $user->createToken('rcvn2012')->plainTextToken;
-
-        return response()->json([
-            'status' => true,
-            'message' => 'User successfully registered',
-            'user' => $user,
-            'token' => $token
-        ], Response::HTTP_CREATED);
-    }
 
     public function login(Request $request)
     {

@@ -21,15 +21,13 @@ use App\Http\Controllers\API\Users\UserController;
 
 Route::prefix('user')->group(function () {
     Route::prefix('auth')->controller(UserAuthController::class)->group(function(){
-        Route::post('register', 'register');
         Route::post('login', 'login');
-        
     });
 
     Route::middleware(['auth:users'])->group(function () {
-        Route::resource('/users', UserController::class)->except([
-            'create'
-        ]);
+        Route::resource('/users', UserController::class)->except(['create', 'edit','show']);
+        Route::put('/users/deactivate/{id}', [UserController::class, 'deactivate']);
+        Route::get('/users/{user}', [UserController::class, 'detail']);
         Route::post('logout', [UserAuthController::class, 'logout']);
     });
 });

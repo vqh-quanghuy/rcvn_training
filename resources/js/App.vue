@@ -16,7 +16,8 @@
 
                     <v-app-bar-title>Photos</v-app-bar-title>
 
-                    <template v-slot:append>
+                    <template v-if="access_token !== ''" v-slot:append>
+                        <v-app-bar-title>{{user_info.name}}</v-app-bar-title>
                         <v-btn icon="mdi-logout"></v-btn>
                     </template>
                 </v-app-bar>
@@ -41,6 +42,7 @@ export default {
     },
     methods: {
         onLoginSuccess(data) {
+            console.log('data.user :>> ', data.user);
             this.access_token = data.access_token;
             this.user_info = data.user;
         }
