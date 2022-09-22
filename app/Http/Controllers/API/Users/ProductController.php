@@ -93,9 +93,9 @@ class ProductController extends Controller
             $destinationPath = 'images/';
             $productImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
             $image->move($destinationPath, $productImage);
-            $inputs['product_image'] = "$productImage";
+            $inputs['product_image'] = $productImage;
         } else {
-            unset($inputs['product_image']);
+            $inputs['product_image'] = '';
         }
 
         $product->fill($inputs)->save();   
