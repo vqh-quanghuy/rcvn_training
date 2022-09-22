@@ -11,46 +11,6 @@ use App\Models\Customer;
 
 class CustomerAuthController extends Controller
 {
-    /**
-     * Register a User.
-     * @return \Illuminate\Http\Response
-     */
-    public function register(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'customer_name' => 'required|string|max:255',
-            'tel_num' => 'required|string|max:14',
-            'email' => 'required|string|email|max:255|unique:users',
-            'address' => 'required|string|max:255',
-            'password' => 'required|string|confirmed|min:8',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Invalid Inputs',
-                'error' => $validator->errors()
-            ], 401);
-        }
-
-        $customer = new Customer();
-        $customer->customer_name = $request->customer_name;
-        $customer->address = $request->address;
-        $customer->tel_num = $request->tel_num;
-        $customer->email = $request->email;
-        $customer->is_active = 1;
-        $customer->password = bcrypt($request->password);
-        $customer->save();
-
-        $token = $customer->createToken('rcvn2012')->plainTextToken;
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Customer successfully registered',
-            'user' => $customer,
-            'token' => $token
-        ], Response::HTTP_CREATED);
-    }
 
     public function login(Request $request)
     {

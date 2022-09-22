@@ -42,7 +42,7 @@ class UserController extends Controller
                 'status' => false,
                 'message' => 'Invalid Inputs',
                 'error' => $validator->errors()
-            ], 401);
+            ], Response::HTTP_UNAUTHORIZED);
         }
 
         $item = new User();

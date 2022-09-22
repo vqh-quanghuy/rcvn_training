@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\UserAuthController;
 use App\Http\Controllers\Api\Auth\CustomerAuthController;
 use App\Http\Controllers\API\Users\UserController;
+use App\Http\Controllers\API\Users\CustomerController;
+use App\Http\Controllers\API\Users\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,9 +27,20 @@ Route::prefix('user')->group(function () {
     });
 
     Route::middleware(['auth:users'])->group(function () {
-        Route::resource('/users', UserController::class)->except(['create', 'edit','show']);
+        // Users Management
+        Route::resource('/users', UserController::class)->except(['create', 'edit', 'show']);
         Route::put('/users/deactivate/{id}', [UserController::class, 'deactivate']);
         Route::get('/users/{user}', [UserController::class, 'detail']);
+
+        // Customers Management
+        Route::resource('/customers', CustomerController::class)->except(['create', 'edit', 'show', 'destroy']);
+        Route::get('/customers/{customer}', [CustomerController::class, 'detail']);
+
+        // Products Management
+        Route::resource('/products', ProductController::class)->except(['create', 'edit', 'show']);
+        Route::get('/products/{product}', [ProductController::class, 'detail']);
+
+
         Route::post('logout', [UserAuthController::class, 'logout']);
     });
 });
