@@ -16,7 +16,8 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = User::where('is_delete', 0)->paginate(5);
+        $per_page = intval(\Request::get('per_page')) ?: 10;
+        $users = User::where('is_delete', 0)->orderBy('created_at', 'desc')->paginate($per_page);
         $roles = DB::table('group_role')->select('id', 'role_name')->get();
 
         return response()->json([
@@ -34,7 +35,6 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|confirmed|min:8',
             'is_active' => 'required|integer|between:0,1',
-            'is_delete' => 'required|integer|between:0,1',
         ]);
 
         if ($validator->fails()) {
@@ -50,7 +50,7 @@ class UserController extends Controller
         $item->email = $request->email;
         $item->group_role = $request->group_role;
         $item->is_active = $request->is_active;
-        $item->is_delete = $request->is_delete;
+        $item->is_delete = 0;
         $item->password = Hash::make($request->password);
         $item->save();
 
@@ -78,7 +78,6 @@ class UserController extends Controller
             'group_role' => 'required|string|max:50',
             'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
             'is_active' => 'required|integer|between:0,1',
-            'is_delete' => 'required|integer|between:0,1',
         ]);
 
         if ($validator->fails()) {
