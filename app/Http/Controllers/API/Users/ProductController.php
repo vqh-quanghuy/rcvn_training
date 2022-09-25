@@ -12,7 +12,8 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::paginate(5);
+        $per_page = intval(\Request::get('per_page')) ?: 10;
+        $products = Product::orderBy('created_at', 'desc')->paginate($per_page);
 
         return response()->json([
             'status' => true,
