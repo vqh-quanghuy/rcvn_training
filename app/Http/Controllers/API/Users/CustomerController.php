@@ -30,7 +30,7 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'customer_name' => 'required|string|max:255',
+            'customer_name' => 'required|string|max:255|min:5',
             'tel_num' => 'required|string|max:14',
             'email' => 'required|string|email|max:255|unique:customers',
             'address' => 'required|string|max:255',
@@ -73,7 +73,7 @@ class CustomerController extends Controller
     public function update(Request $request, Customer $customer)
     {
         $validator = Validator::make($request->all(), [
-            'customer_name' => 'required|string|max:255',
+            'customer_name' => 'required|string|max:255|min:5',
             'tel_num' => 'required|string|max:14',
             'email' => 'required|string|email|max:255|unique:customers,email,'.$customer->customer_id.',customer_id',
             'address' => 'required|string|max:255',

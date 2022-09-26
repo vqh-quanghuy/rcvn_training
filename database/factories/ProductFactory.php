@@ -29,7 +29,7 @@ class ProductFactory extends Factory
             ]),
             'product_price' => fake()->numberBetween(400, 5000),
             'description' => fake()->paragraph(),
-            'is_sale' => round(rand(0, 1)),
+            'is_sale' => round(rand(0, 2)),
         ];
     }
 }
