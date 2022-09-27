@@ -18,8 +18,45 @@ class CustomerController extends Controller
      */
     public function index()
     {
+        // Get Params from search 
+        $customerName = \Request::get('name') ?: null;
+        $customerEmail = \Request::get('email') ?: null;
+        $customerStatus = \Request::get('customer_status');
+        if(!is_numeric($customerStatus) && $customerStatus === '') $customerStatus = null;
+        $customerAddress = \Request::get('address') ?: null;
+
+        $customerName = preg_replace('/[^a-z0-9 _]+/i', '', $customerName);
+        $customerEmail = preg_replace('/[^a-z0-9 _]+/i', '', $customerEmail);
+        $customerAddress = preg_replace('/[^a-z0-9 _]+/i', '', $customerAddress);
+
+        $validator = Validator::make([
+            'customer_name' => $customerName, 
+            'customer_email' => $customerEmail,
+            'customer_status' => $customerStatus,
+            'customer_address' => $customerAddress,
+        ], [
+            'customer_name' => 'nullable|string',
+            'customer_email' => 'nullable|string',
+            'customer_status' => 'nullable|integer',
+            'customer_address' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid Inputs',
+                'error' => $validator->errors()
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
         $per_page = intval(\Request::get('per_page')) ?: 10;
-        $customers = Customer::orderBy('created_at', 'desc')->paginate($per_page);
+        $customers = Customer::orderBy('created_at', 'desc');
+        if(!empty($customerName)) $customers = $customers->where('customer_name', 'like', "%{$customerName}%");
+        if(!empty($customerEmail)) $customers = $customers->where('email', 'like', "%{$customerEmail}%");
+        if(!is_null($customerStatus)) $customers = $customers->where('is_active', $customerStatus);
+        if(!empty($customerAddress)) $customers = $customers->where('address', 'like', "%{$customerAddress}%");
+        
+        $customers = $customers->paginate($per_page);
 
         return response()->json([
             'status' => true,

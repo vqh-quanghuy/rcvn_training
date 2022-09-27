@@ -16,7 +16,8 @@ class ProductController extends Controller
         $productName = \Request::get('name') ?: null;
         // Remove special chars from string
         $productName = preg_replace('/[^a-z0-9 _]+/i', '', $productName);
-        $saleStatus = intVal(\Request::get('sale_status')) ?: null;
+        $saleStatus = \Request::get('sale_status');
+        if(!is_numeric($saleStatus) && $saleStatus === '') $saleStatus = null;
         $fromPrice = \Request::get('from_price') ?: null;
         $toPrice = \Request::get('to_price') ?: null;
 
@@ -42,8 +43,8 @@ class ProductController extends Controller
 
         $per_page = intval(\Request::get('per_page')) ?: 10;
         $products = Product::orderBy('created_at', 'desc');
-        if($productName) $products = $products->where('product_name', 'like', "%{$productName}%");
-        if($saleStatus) $products = $products->where('is_sale', $saleStatus);
+        if(!empty($productName)) $products = $products->where('product_name', 'like', "%{$productName}%");
+        if(!is_null($saleStatus)) $products = $products->where('is_sale', $saleStatus);
         if(!empty($fromPrice) && !empty($toPrice)) {
             $products = $products->whereBetween('product_price',  [$fromPrice, $toPrice]);
         } elseif (!empty($fromPrice)) {
